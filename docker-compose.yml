@@ -1,0 +1,38 @@
+version: '3'
+
+volumes:
+  mysql_data:
+    driver: local
+
+services:
+
+  mysql-db:
+    image: mysql
+    container_name: mysql-db
+    hostname: mysql-db
+    ports:
+      - "3307:3306"
+    restart: always
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: people_api_db
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: appuser@Aa.se
+
+
+  people-api:
+    image: javanmehrdad/people-api
+    container_name: people-api
+    hostname: people-api
+    ports:
+      - "8282:8080"
+    depends_on:
+      - mysql-db
+    environment:
+      RDS_HOSTNAME: mysql-db
+      RDS_PORT: 3306
+      RDS_DB_NAME: people_api_db
+      RDS_USERNAME: appuser
+      RDS_PASSWORD: appuser@Aa.se
